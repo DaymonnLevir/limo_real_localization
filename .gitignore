@@ -1,0 +1,29 @@
+# ROS 2
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
+
+# Livox SDK build
+Livox-SDK2/build/
+
+# FAST-LIO2 runtime outputs
+ros2_ws/src/fast_lio2/Log/
+ros2_ws/src/fast_lio2/PCD/
+
+# ROS bags / generated results
+bags/
+resultados/
+*.db3
+*.mcap
+*.bag
+
+# Editor / temporary
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
