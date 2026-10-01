@@ -1,9 +1,6 @@
 FROM ros:humble-ros-base-jammy
-
 SHELL ["/bin/bash", "-c"]
-
 ENV DEBIAN_FRONTEND=noninteractive
-
 # Dependências de compilação + dependências usadas pelo
 # Livox-SDK2, livox_ros_driver2 e FAST-LIO2.
 RUN apt-get update && apt-get install -y \
@@ -31,20 +28,20 @@ RUN apt-get update && apt-get install -y \
     ros-humble-visualization-msgs \
     ros-humble-common-interfaces \
     ros-humble-tf2 \
+    ros-humble-tf2-ros \
+    ros-humble-tf2-geometry-msgs \
+    ros-humble-builtin-interfaces \
+    ros-humble-teleop-twist-keyboard \
     ros-humble-pcl-ros \
     ros-humble-pcl-conversions \
     ros-humble-rosbag2 \
     ros-humble-rviz2 \
     && rm -rf /var/lib/apt/lists/*
-
 WORKDIR /workspace
-
 # ============================================================
 # Livox-SDK2
 # ============================================================
-
 COPY Livox-SDK2 /workspace/Livox-SDK2
-
 RUN cd /workspace/Livox-SDK2 && \
     rm -rf build && \
     mkdir build && \
@@ -53,13 +50,10 @@ RUN cd /workspace/Livox-SDK2 && \
     make -j2 && \
     make install && \
     ldconfig
-
 # ============================================================
 # ROS 2 workspace
 # ============================================================
-
 COPY ros2_ws /workspace/ros2_ws
-
 RUN source /opt/ros/humble/setup.bash && \
     cd /workspace/ros2_ws && \
     colcon build \
@@ -68,11 +62,8 @@ RUN source /opt/ros/humble/setup.bash && \
             -DCMAKE_BUILD_TYPE=Release \
             -DROS_EDITION=ROS2 \
             -DDISTRO_ROS=humble
-
 # Ambiente automático ao abrir um terminal
 RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc && \
     echo "source /workspace/ros2_ws/install/setup.bash" >> /root/.bashrc
-
 WORKDIR /workspace/ros2_ws
-
 CMD ["bash"]
