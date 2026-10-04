@@ -1,0 +1,11 @@
+==> /tmp/limo-stage1-evidence/final-lidar-hz.txt <==
+average rate: 9.771
+	min: 0.086s max: 0.209s std dev: 0.01584s window: 127
+
+==> /tmp/limo-stage1-evidence/final-imu-hz.txt <==
+average rate: 200.001
+	min: 0.000s max: 0.027s std dev: 0.00230s window: 2610
+
+==> /tmp/limo-stage1-evidence/final-odom-hz.txt <==
+average rate: 9.932
+	min: 0.066s max: 0.186s std dev: 0.01605s window: 127

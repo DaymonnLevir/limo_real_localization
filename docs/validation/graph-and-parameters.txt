@@ -1,0 +1,42 @@
+/laserMapping
+  Subscribers:
+    /livox/imu: sensor_msgs/msg/Imu
+    /livox/lidar: sensor_msgs/msg/PointCloud2
+    /parameter_events: rcl_interfaces/msg/ParameterEvent
+  Publishers:
+    /LIVO2/imu_propagate: nav_msgs/msg/Odometry
+    /Laser_map: sensor_msgs/msg/PointCloud2
+    /aft_mapped_to_init: nav_msgs/msg/Odometry
+    /cloud_effected: sensor_msgs/msg/PointCloud2
+    /cloud_registered: sensor_msgs/msg/PointCloud2
+    /cloud_visual_sub_map_before: sensor_msgs/msg/PointCloud2
+    /dyn_obj: sensor_msgs/msg/PointCloud2
+    /dyn_obj_dbg_hist: sensor_msgs/msg/PointCloud2
+    /dyn_obj_removed: sensor_msgs/msg/PointCloud2
+    /mavros/vision_pose/pose: geometry_msgs/msg/PoseStamped
+    /parameter_events: rcl_interfaces/msg/ParameterEvent
+    /path: nav_msgs/msg/Path
+    /planes: visualization_msgs/msg/MarkerArray
+    /planner_normal: visualization_msgs/msg/Marker
+    /rosout: rcl_interfaces/msg/Log
+    /tf: tf2_msgs/msg/TFMessage
+    /visualization_marker: visualization_msgs/msg/MarkerArray
+    /voxels: visualization_msgs/msg/MarkerArray
+  Service Servers:
+    /laserMapping/describe_parameters: rcl_interfaces/srv/DescribeParameters
+    /laserMapping/get_parameter_types: rcl_interfaces/srv/GetParameterTypes
+    /laserMapping/get_parameters: rcl_interfaces/srv/GetParameters
+    /laserMapping/list_parameters: rcl_interfaces/srv/ListParameters
+    /laserMapping/set_parameters: rcl_interfaces/srv/SetParameters
+    /laserMapping/set_parameters_atomically: rcl_interfaces/srv/SetParametersAtomically
+  Service Clients:
+
+  Action Servers:
+
+  Action Clients:
+
+Integer value is: 0
+Integer value is: 1
+sensor_msgs/msg/PointCloud2
+sensor_msgs/msg/Imu
+nav_msgs/msg/Odometry

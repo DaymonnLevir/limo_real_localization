@@ -1,0 +1,7 @@
+[INFO] [fastlivo_mapping-1]: process started with pid [347]
+[INFO] [rviz2-2]: process started with pid [349]
+[rviz2-2] [INFO] [1791148579.921286761] [rviz2]: OpenGl version: 4.5 (GLSL 4.5)
+[fastlivo_mapping-1] [INFO] [1791148581.180715161] []: IMU Initials: Gravity: -0.1852 0.1674 -9.8068 0.9902; acc covarience: 0.10000000 0.10000000 0.10000000; gry covarience: 0.10000000 0.10000000 0.10000000 
+[fastlivo_mapping-1] [INFO] [1791148581.180733691] []: IMU Initials: ba covarience: 0.00010000 0.00010000 0.00010000; bg covarience: 0.00010000 0.00010000 0.00010000
+[fastlivo_mapping-1] Gravity Alignment Starts
+[fastlivo_mapping-1] Gravity Alignment Finished

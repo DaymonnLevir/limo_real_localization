@@ -50,14 +50,48 @@ RUN cd /workspace/Livox-SDK2 && \
     make -j2 && \
     make install && \
     ldconfig
+# FAST-LIVO2 compile-time dependencies (the runtime camera path is disabled).
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libopencv-dev libfmt-dev ros-humble-sophus \
+    ros-humble-cv-bridge ros-humble-image-transport \
+    && rm -rf /var/lib/apt/lists/*
+# The ROS Sophus package exports a target, while this fork reads legacy include variables.
+# Match the upstream Docker include path for Vikit and FAST-LIVO2.
+ENV CPATH=/opt/ros/humble/include
+# Pinned U-AMC Vikit dependency; no additional Livox driver or SDK.
+RUN git clone https://github.com/U-AMC/rpg_vikit_rational_polynomial.git /workspace/ros2_ws/src/rpg_vikit && \
+    cd /workspace/ros2_ws/src/rpg_vikit && \
+    git checkout 6f213c7fe6be1aff1fc79c7bd6103e3e9bc4a02d && \
+    rm -rf .git && \
+    source /opt/ros/humble/setup.bash && \
+    cmake -S vikit_common -B /tmp/vikit_common_build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local && \
+    cmake --build /tmp/vikit_common_build --parallel 2 && \
+    cmake --install /tmp/vikit_common_build && \
+    mkdir -p /usr/local/lib/cmake/vikit_common && \
+    printf '%s\n' \
+      'set(vikit_common_INCLUDE_DIRS "/usr/local/include")' \
+      'set(vikit_common_INCLUDE_DIR "/usr/local/include")' \
+      'set(vikit_common_LIBRARIES "/usr/local/lib/libvikit_common.so")' \
+      'set(vikit_common_LIBRARY_DIRS "/usr/local/lib")' \
+      > /usr/local/lib/cmake/vikit_common/vikit_commonConfig.cmake && \
+    ldconfig && \
+    touch vikit_common/COLCON_IGNORE vikit_py/COLCON_IGNORE && \
+    rm -rf /tmp/vikit_common_build
 # ============================================================
 # ROS 2 workspace
 # ============================================================
 COPY ros2_ws /workspace/ros2_ws
 RUN source /opt/ros/humble/setup.bash && \
     cd /workspace/ros2_ws && \
-    colcon build \
+    MAKEFLAGS=-j2 CMAKE_BUILD_PARALLEL_LEVEL=2 colcon build --executor sequential \
         --symlink-install \
+        --packages-select \
+            limo_msgs \
+            limo_base \
+            livox_ros_driver2 \
+            fast_lio \
+            vikit_ros \
+            fast_livo \
         --cmake-args \
             -DCMAKE_BUILD_TYPE=Release \
             -DROS_EDITION=ROS2 \
