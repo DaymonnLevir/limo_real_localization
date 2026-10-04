@@ -1,0 +1,15 @@
+string output_dir
+string tag
+bool include_history
+bool include_map_outputs
+---
+bool success
+string output_dir_resolved
+string run_dir
+string snapshot_png_path
+string tree_map_csv_path
+string tree_map_json_path
+string tree_map_history_path
+string tree_detection_history_path
+string metadata_json_path
+string message

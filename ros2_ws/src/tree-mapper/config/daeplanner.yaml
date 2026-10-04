@@ -1,0 +1,149 @@
+tree_detector_node:
+  ros__parameters:
+    input_cloud_topic: /camera/depth/points
+    target_frame: world
+    clustering_mode: dbscan_gmm
+    fit_method: ransac
+    slice_z_min: 1.15
+    slice_z_max: 1.45
+    min_diameter: 0.15
+    max_diameter: 0.50
+    max_points: 180000
+    dbscan_eps: 0.30
+    dbscan_min_samples: 10
+    enable_gmm_split: true
+    gmm_split_trigger: fit_radius
+    gmm_radius_threshold: 0.25
+    gmm_pairwise_distance_threshold: 0.45
+    gmm_min_points: 10
+    gmm_components: 2
+    gmm_min_center_dist: 0.0
+    min_cluster_points: 3
+    cell_size: 0.20
+    min_points_per_cell: 3
+    min_cells_per_cluster: 3
+    max_cells_per_cluster: 300
+    max_extent_to_diameter_ratio: 1.35
+    ransac_iterations: 50
+    ransac_distance_threshold: 0.01
+    ransac_min_inlier_ratio: 0.45
+    rlts_trim_percentile: 75.0
+    history_csv_output_path: auto
+    export_slice_debug: true
+    slice_debug_json_output_path: auto
+    runtime_state_namespace: /tree_mapper_runtime
+    experiment_seed: -1
+
+tree_id_tracker:
+  ros__parameters:
+    max_match_dist: 0.40
+    max_diameter_delta: 0.45
+    diameter_weight: 0.40
+    position_alpha: 0.45
+    diameter_alpha: 0.38
+    max_missed_time: 25.0
+    min_detection_circle_fit_score: 0.55
+    default_radius: 0.30
+    default_height: 2.0
+    marker_lifetime: 0.8
+
+tree_map_fuser:
+  ros__parameters:
+    output_topic: /tree_map_poses
+    output_id_topic: /tree_map_ids
+    output_array_topic: /tree_map_full
+    marker_topic: /tree_map_markers
+    candidate_topic: /tree_map_candidates
+    candidate_id_topic: /tree_map_candidate_ids
+    candidate_array_topic: /tree_map_candidate_full
+    association_dist: 0.45
+    id_reuse_max_dist: 0.95
+    max_diameter_delta: 0.45
+    diameter_assoc_weight: 0.35
+    min_confirmations: 3
+    max_std_xy: 0.70
+    max_std_diameter: 0.28
+    min_confirmed_circle_fit_score: 0.55
+    prune_unconfirmed_after_sec: 180.0
+    publish_rate_hz: 2.0
+    publish_candidates: true
+    log_throttle_sec: 2.0
+    auto_export_period_sec: 5.0
+    observer_pose_topic: /odom
+    angular_bin_size_deg: 15.0
+    angular_min_range_m: 0.75
+    log_detections_topic: /tree_mapper/log_detections_now
+    ground_truth_diameter_m: 0.30
+    csv_output_path: auto
+    json_output_path: auto
+    history_csv_output_path: auto
+    runtime_state_namespace: /tree_mapper_runtime
+
+tree_xy_plotter:
+  ros__parameters:
+    fixed_axes: false
+    x_min: -10.0
+    x_max: 10.0
+    y_min: -8.0
+    y_max: 7.0
+    axis_margin: 5.0
+    use_boundary_bounds: false
+    tick_step: 5.0
+    show_live_labels: true
+    show_map_labels: true
+    show_metrics: true
+    max_labels: 90
+    show_route_trace: true
+    route_pose_topic: /odom
+    log_detections_topic: /tree_mapper/log_detections_now
+    route_min_point_dist: 0.15
+    route_max_points: 4000
+    route_line_width: 1.8
+
+tree_cluster_xy_plotter:
+  ros__parameters:
+    fixed_axes: false
+    x_min: -10.0
+    x_max: 10.0
+    y_min: -8.0
+    y_max: 7.0
+    axis_margin: 5.0
+    use_boundary_bounds: false
+    tick_step: 5.0
+    cluster_point_size: 12.0
+    cluster_alpha: 0.62
+    show_map_labels: true
+    show_metrics: true
+    max_labels: 90
+    show_route_trace: true
+    route_pose_topic: /odom
+    log_detections_topic: /tree_mapper/log_detections_now
+    route_min_point_dist: 0.15
+    route_max_points: 4000
+    route_line_width: 1.8
+    ground_truth_csv_path: ""
+
+tree_snapshot_exporter:
+  ros__parameters:
+    fixed_axes: false
+    x_min: -10.0
+    x_max: 10.0
+    y_min: -8.0
+    y_max: 7.0
+    use_boundary_bounds: false
+    axis_margin: 5.0
+    tick_step: 5.0
+    cluster_point_size: 12.0
+    cluster_alpha: 0.62
+    show_route_trace: true
+    route_pose_topic: /odom
+    show_ground_truth: false
+    ground_truth_csv_path: ""
+    show_ground_truth_labels: true
+    tree_map_csv_output_path: auto
+    tree_map_json_output_path: auto
+    tree_map_history_output_path: auto
+    tree_detection_history_output_path: auto
+    snapshot_prefix: tree_snapshot
+    save_on_shutdown: true
+    runtime_state_namespace: /tree_mapper_runtime

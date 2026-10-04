@@ -27,3 +27,13 @@ resultados/
 # Python
 __pycache__/
 *.pyc
+
+# Python/runtime cache
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Development backups
+*.orig
+*.bak
+*.bak_*

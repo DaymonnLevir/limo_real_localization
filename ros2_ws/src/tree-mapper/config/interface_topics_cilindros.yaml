@@ -1,0 +1,202 @@
+# tree_mapper para CILINDROS ARTIFICIAIS (0.50 m de altura, 0.15 m de diametro), derivado de
+# interface_topics.yaml. Use via: ros2 launch informative_planner limo_ipp.launch.py
+#   tree_mapper_config:=interface_topics_cilindros.yaml
+# ATENCAO: band_z_* e em camera_init, cujo z=0 esta na altura do LiDAR (nao no chao). Os valores
+# abaixo assumem LiDAR a ~0.30 m do solo (simulacao): banda = 0.05 a 0.47 m acima do solo.
+# No robo real ajuste band_z_min/band_z_max pela altura de montagem do MID-360.
+vegetation_candidate_detector:
+  ros__parameters:
+    # LIMO: nuvem 3D do sensor embarcado. O LIMO original só tem lidar 2D +
+    # câmera de profundidade; ajuste para o tópico do sensor que for usado.
+    # MRS: /uav1/ouster/points
+    input_cloud_topic: /cloud_registered
+    # Tem que ser o PLANNING_FRAME do informative_planner (MRS: uav1/ground_truth_origin)
+    target_frame: camera_init
+    clustering_mode: dbscan
+    fit_method: ransac
+    band_z_min: -0.25   # cilindros: ~0.05 m acima do solo (LiDAR a 0.30 m)
+    band_z_max: 0.17   # cilindros: ~0.47 m acima do solo (topo em 0.50 m)
+    slice_thickness: 0.10
+    slice_step: 0.06
+    min_points_per_slice: 10
+    min_diameter: 0.08
+    max_diameter: 0.25
+    min_candidate_slices: 1
+    association_max_dist: 0.30
+    association_max_radius_delta: 0.18
+    enable_blob_candidates: true
+    blob_min_points: 12
+    blob_min_extent_diameter: 0.25
+    blob_max_extent_diameter: 1.00
+    blob_max_pca_ratio: 2.80
+    blob_min_compactness: 0.30
+    max_points: 180000
+    dbscan_eps: 0.30
+    dbscan_min_samples: 10
+    ransac_min_inlier_ratio: 0.45
+    rlts_trim_percentile: 75.0
+    debug_publish_clouds: true
+    debug_transformed_cloud_topic: /vegetation_candidate_debug/transformed_cloud
+    debug_band_cloud_topic: /vegetation_candidate_debug/band_cloud
+    # x_min,x_max,y_min,y_max [m] no target_frame: pontos da banda fora da area sao descartados
+    # (vazio = sem filtro). O limo_ipp.launch.py sobrescreve com o map_bounds do planejador.
+    map_bounds: ""
+    exclude_self_points: true
+    self_filter_frame: body
+    self_filter_xy_radius: 0.85
+    self_filter_z_margin: 0.80
+    history_csv_output_path: auto
+    export_slice_debug: false
+    slice_debug_json_output_path: auto
+    runtime_state_namespace: /tree_mapper_runtime
+
+vegetation_candidate_classifier:
+  ros__parameters:
+    tree_min_slice_count: 2
+    tree_hard_min_slice_count: 2
+    tree_min_height_support: 0.20
+    tree_hard_min_height_support: 0.20
+    tree_max_center_std: 0.18
+    tree_max_radius_std: 0.05
+    tree_min_circle_fit_score: 0.65
+    tree_min_classification_score: 0.68
+    shrub_min_extent_diameter: 0.25
+    shrub_max_extent_diameter: 2.60
+    shrub_min_density_proxy: 6.0
+    shrub_min_classification_score: 0.45
+    shrub_height_reference: 0.80
+    class_margin: 0.12
+
+tree_id_tracker:
+  ros__parameters:
+    max_match_dist: 0.60
+    max_diameter_delta: 0.12
+    diameter_weight: 0.30
+    max_missed_time: 25.0
+    position_alpha: 0.40
+    diameter_alpha: 0.32
+    min_detection_score: 0.55
+    default_radius: 0.15
+    default_height: 0.5
+
+shrub_id_tracker:
+  ros__parameters:
+    max_match_dist: 1.20
+    max_diameter_delta: 1.20
+    diameter_weight: 0.08
+    max_missed_time: 25.0
+    position_alpha: 0.28
+    diameter_alpha: 0.22
+    min_detection_score: 0.45
+    default_radius: 0.45
+    default_height: 0.6
+
+tree_map_fuser:
+  ros__parameters:
+    output_topic: /tree_map_poses
+    output_id_topic: /tree_map_ids
+    output_array_topic: /tree_map_full
+    marker_topic: /tree_map_markers
+    candidate_topic: /tree_map_candidates
+    candidate_id_topic: /tree_map_candidate_ids
+    candidate_array_topic: /tree_map_candidate_full
+    min_confirmations: 3
+    association_dist: 0.70
+    id_reuse_max_dist: 0.95
+    max_diameter_delta: 0.12
+    diameter_assoc_weight: 0.25
+    max_std_xy: 0.45
+    max_std_diameter: 0.08
+    min_confirmed_score: 0.58
+    prune_unconfirmed_after_sec: 90.0
+    publish_rate_hz: 2.0
+    observer_pose_topic: /Odometry
+    observer_target_frame: camera_init
+    default_frame_id: camera_init
+    angular_bin_size_deg: 15.0
+    angular_min_range_m: 0.75
+    log_detections_topic: /tree_mapper/log_detections_now
+    csv_output_path: auto
+    json_output_path: auto
+    history_csv_output_path: auto
+    export_now_topic: /tree_map_fuser/export_now
+    runtime_state_namespace: /tree_mapper_runtime
+
+shrub_map_fuser:
+  ros__parameters:
+    output_topic: /shrub_map_poses
+    output_id_topic: /shrub_map_ids
+    output_array_topic: /shrub_map_full
+    marker_topic: /shrub_map_markers
+    candidate_topic: /shrub_map_candidates
+    candidate_id_topic: /shrub_map_candidate_ids
+    candidate_array_topic: /shrub_map_candidate_full
+    min_confirmations: 4
+    association_dist: 1.45
+    id_reuse_max_dist: 1.65
+    max_diameter_delta: 1.20
+    diameter_assoc_weight: 0.05
+    max_std_xy: 1.35
+    max_std_diameter: 0.90
+    min_confirmed_score: 0.45
+    prune_unconfirmed_after_sec: 240.0
+    publish_rate_hz: 2.0
+    observer_pose_topic: /Odometry
+    observer_target_frame: camera_init
+    default_frame_id: camera_init
+    angular_bin_size_deg: 15.0
+    angular_min_range_m: 0.75
+    log_detections_topic: /tree_mapper/log_detections_now
+    csv_output_path: auto
+    json_output_path: auto
+    history_csv_output_path: auto
+    export_now_topic: /shrub_map_fuser/export_now
+    runtime_state_namespace: /tree_mapper_runtime
+
+tree_xy_plotter:
+  ros__parameters:
+    fixed_axes: false
+    x_min: -10.0
+    x_max: 10.0
+    y_min: -8.0
+    y_max: 7.0
+    tick_step: 5.0
+    show_route_trace: true
+    route_pose_topic: /Odometry
+    log_detections_topic: /tree_mapper/log_detections_now
+    route_min_point_dist: 0.15
+    route_max_points: 4000
+
+tree_cluster_xy_plotter:
+  ros__parameters:
+    fixed_axes: false
+    use_boundary_bounds: false
+    axis_margin: 5.0
+    tick_step: 5.0
+    show_route_trace: true
+    route_pose_topic: /Odometry
+    log_detections_topic: /tree_mapper/log_detections_now
+    route_min_point_dist: 0.15
+    route_max_points: 4000
+    cluster_point_size: 12.0
+    cluster_alpha: 0.62
+    ground_truth_csv_path: /root/biomass-uav-ws/src/biomass-simulation-resources/ground_truth/forest_1_sensors/forest_1_sensors_ground_truth.csv
+
+tree_snapshot_exporter:
+  ros__parameters:
+    fixed_axes: false
+    use_boundary_bounds: false
+    axis_margin: 5.0
+    tick_step: 5.0
+    show_route_trace: true
+    route_pose_topic: /Odometry
+    show_ground_truth: true
+    ground_truth_csv_path: /root/biomass-uav-ws/src/biomass-simulation-resources/ground_truth/forest_1_sensors/forest_1_sensors_ground_truth.csv
+    show_ground_truth_labels: true
+    tree_map_csv_output_path: auto
+    tree_map_json_output_path: auto
+    tree_map_history_output_path: auto
+    tree_detection_history_output_path: auto
+    snapshot_prefix: tree_snapshot
+    save_on_shutdown: true
+    runtime_state_namespace: /tree_mapper_runtime
