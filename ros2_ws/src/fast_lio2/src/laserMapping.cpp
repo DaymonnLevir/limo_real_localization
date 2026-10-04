@@ -288,9 +288,8 @@ void standard_pcl_cbk(const sensor_msgs::msg::PointCloud2::UniquePtr msg)
     double preprocess_start_time = omp_get_wtime();
     if (!is_first_lidar && cur_time < last_timestamp_lidar)
     {
-        std::cerr << "lidar loop back, clear buffer (cur " << std::fixed << cur_time << " < last " << last_timestamp_lidar << ")" << std::endl;
+        std::cerr << "lidar loop back, clear buffer" << std::endl;
         lidar_buffer.clear();
-        time_buffer.clear();  // LIMO fix: time_buffer precisa ser limpo junto, senao fica desalinhado do lidar_buffer
     }
     if (is_first_lidar)
     {
@@ -317,9 +316,8 @@ void livox_pcl_cbk(const livox_ros_driver2::msg::CustomMsg::UniquePtr msg)
     scan_count ++;
     if (!is_first_lidar && cur_time < last_timestamp_lidar)
     {
-        std::cerr << "lidar loop back, clear buffer (cur " << std::fixed << cur_time << " < last " << last_timestamp_lidar << ")" << std::endl;
+        std::cerr << "lidar loop back, clear buffer" << std::endl;
         lidar_buffer.clear();
-        time_buffer.clear();  // LIMO fix: time_buffer precisa ser limpo junto, senao fica desalinhado do lidar_buffer
     }
     if(is_first_lidar)
     {
@@ -386,34 +384,6 @@ bool sync_packages(MeasureGroup &meas)
 {
     if (lidar_buffer.empty() || imu_buffer.empty()) {
         return false;
-    }
-
-    /*** LIMO fix 1: lidar_buffer e time_buffer tem que andar juntos (o carimbo de cada scan). ***/
-    if (lidar_buffer.size() != time_buffer.size())
-    {
-        std::cerr << "[LIMO fix] lidar_buffer (" << lidar_buffer.size() << ") e time_buffer ("
-                  << time_buffer.size() << ") desalinhados: limpando os dois" << std::endl;
-        lidar_buffer.clear();
-        time_buffer.clear();
-        lidar_pushed = false;
-        return false;
-    }
-
-    /*** LIMO fix 2: descarta scans antigos. Um pico de carga deixava ~13 scans na fila e o FAST-LIO
-         processava sempre o mais antigo, com a pose ~1.3 s atrasada para sempre. Mantem so o mais
-         novo; a IMU dos scans descartados continua no imu_buffer e e integrada no proximo scan. ***/
-    if (!lidar_pushed && lidar_buffer.size() > 2)
-    {
-        static long dropped_total = 0;
-        const size_t n_drop = lidar_buffer.size() - 1;
-        for (size_t i = 0; i < n_drop; ++i)
-        {
-            lidar_buffer.pop_front();
-            time_buffer.pop_front();
-        }
-        dropped_total += n_drop;
-        std::cerr << "[LIMO fix] fila com " << n_drop + 1 << " scans: descartados " << n_drop
-                  << " antigos (total " << dropped_total << ")" << std::endl;
     }
 
     /*** push a lidar scan ***/
@@ -956,9 +926,7 @@ public:
         {
             sub_pcl_pc_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(lid_topic, rclcpp::SensorDataQoS(), standard_pcl_cbk);
         }
-        // LIMO fix 3: IMU best effort com fila longa. Reliable com fila 10 a 200 Hz segurava as amostras
-        // seguintes quando uma se perdia (~1.3 s), e o sync_packages esperava a IMU com a fila de scans cheia.
-        sub_imu_ = this->create_subscription<sensor_msgs::msg::Imu>(imu_topic, rclcpp::QoS(rclcpp::KeepLast(400)).best_effort(), imu_cbk);
+        sub_imu_ = this->create_subscription<sensor_msgs::msg::Imu>(imu_topic, 10, imu_cbk);
         pubLaserCloudFull_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("/cloud_registered", 20);
         pubLaserCloudFull_body_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("/cloud_registered_body", 20);
         pubLaserCloudEffect_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("/cloud_effected", 20);
