@@ -36,6 +36,9 @@ RUN apt-get update && apt-get install -y \
     ros-humble-pcl-conversions \
     ros-humble-rosbag2 \
     ros-humble-rviz2 \
+    ros-humble-v4l2-camera \
+    ros-humble-camera-info-manager \
+    ros-humble-camera-calibration \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /workspace
 # ============================================================

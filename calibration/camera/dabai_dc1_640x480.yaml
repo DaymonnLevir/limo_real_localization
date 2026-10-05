@@ -1,0 +1,26 @@
+image_width: 640
+image_height: 480
+camera_name: dabai_dc1_rgb
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [494.55179,   0.     , 314.61947,
+           0.     , 493.91134, 221.95045,
+           0.     ,   0.     ,   1.     ]
+distortion_model: plumb_bob
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [0.095855, -0.122538, 0.003246, 0.002270, 0.000000]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1., 0., 0.,
+         0., 1., 0.,
+         0., 0., 1.]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [503.51932,   0.     , 315.4927 ,   0.     ,
+           0.     , 503.13443, 222.82106,   0.     ,
+           0.     ,   0.     ,   1.     ,   0.     ]
