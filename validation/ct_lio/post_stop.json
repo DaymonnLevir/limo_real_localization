@@ -1,0 +1,93 @@
+{
+  "duration_s": 15.175118226999984,
+  "rates": {
+    "lidar": {
+      "count": 43,
+      "hz": 2.902163885226803
+    },
+    "imu": {
+      "count": 52,
+      "hz": 3.433144314944622
+    },
+    "odom": {
+      "count": 44,
+      "hz": 2.900616853672825
+    },
+    "path": {
+      "count": 44,
+      "hz": 2.906480435339599
+    },
+    "map": {
+      "count": 43,
+      "hz": 2.9019741256344256
+    },
+    "tf": {
+      "count": 43,
+      "hz": 2.8336827066427377
+    }
+  },
+  "timestamp_regressions": {
+    "lidar": 0,
+    "imu": 0,
+    "odom": 0,
+    "path": 0,
+    "map": 0,
+    "tf": 0
+  },
+  "invalid_messages": {
+    "lidar": 0,
+    "imu": 0,
+    "odom": 0,
+    "path": 0,
+    "map": 0,
+    "tf": 0
+  },
+  "lidar": {
+    "points_min": 17568,
+    "points_max": 20736,
+    "timespan_s_min": 0.099145984,
+    "timespan_s_max": 0.123090176,
+    "timestamp_field": true,
+    "point_time_regressions": 1304,
+    "positive_timespan_frames": 10,
+    "sampled_frames": 10
+  },
+  "imu": {
+    "acc_norm_mean_g": 0.9912953366132563,
+    "acc_norm_min_g": 0.9831103226789909,
+    "acc_norm_max_g": 0.9990570467528989,
+    "gyro_norm_mean_rad_s": 0.011144268576313383
+  },
+  "ct_lio": {
+    "initial_xyz_m": [
+      1.057363478305924,
+      -0.026638365591888594,
+      0.015404751138473397
+    ],
+    "final_xyz_m": [
+      1.0575153029068638,
+      -0.02443852879020431,
+      0.01715758488001967
+    ],
+    "final_displacement_m": 0.0028168703891017356,
+    "maximum_displacement_m": 0.005308733852087631,
+    "initial_xyzw": [
+      -0.010365475720062722,
+      -0.006039158358675677,
+      -0.031340910263336706,
+      0.9994367577907475
+    ],
+    "final_xyzw": [
+      -0.01006142272795098,
+      -0.0059993169896139864,
+      -0.031489360708875896,
+      0.9994354387005165
+    ]
+  },
+  "tf_frames": [
+    [
+      "ct_lio_odom",
+      "livox_frame"
+    ]
+  ]
+}

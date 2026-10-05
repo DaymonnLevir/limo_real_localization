@@ -51,3 +51,9 @@ __pycache__/
 # FAST-LIVO2 Stage 2 camera calibration raw data
 calibration/camera/dabai_dc1_raw/
 calibration/camera/dabai_dc1_calibrationdata.tar.gz
+
+# CT-LIO outputs and Phase-2 raw sensor data
+ros2_ws/src/ct_lio/log/
+ros2_ws/src/ct_lio/PCD/
+validation/ct_lio/raw/
+*.pcd

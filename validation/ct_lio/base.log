@@ -1,0 +1,9 @@
+Loading parameters: 
+- port name: ttyTHS0
+- odom frame name: odom
+- base frame name: base_link
+- odom topic name: 0
+- use_mcnamu_: 0
+[INFO] [1791212345.134723204] [limo_base]: connet the serial port:'/dev/ttyTHS0'
+[INFO] [1791212345.158481668] [limo_base]: enableCommandedMode :
+[INFO] [1791212345.158632230] [limo_base]: Open the serial port:'/dev/ttyTHS0'

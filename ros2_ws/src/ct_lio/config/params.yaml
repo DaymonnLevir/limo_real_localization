@@ -1,0 +1,112 @@
+# ct_lio_ros2 参数文件 (ROS2 标准格式)
+# 参数按语义分组: 通信 / TF / 预处理 / 里程计 / ESKF / 地图保存
+# 核心算法参数数值完全复用原版 config/mapping.yaml
+
+/ct_lio_node:
+  ros__parameters:
+    # ==================== 通信 (话题/QoS) ====================
+    lidar_topic: /livox/lidar_front  # 只订阅前雷达，禁止双雷达输入 CT-LIO
+    imu_topic: /livox/imu_front      # 与前雷达配套的 IMU
+    odom_topic: /chargingbot/ct_lio/odom                # 位姿输出
+    path_topic: /chargingbot/ct_lio/odometry_path       # 轨迹输出
+    scan_topic: /chargingbot/ct_lio/map_incremental     # 增量地图点云
+    publish_path: true               # 是否发布轨迹
+    lidar_freq_hz: 10.0              # 点云频率(队列=hz*3)
+    imu_freq_hz: 200.0               # IMU 频率(队列=hz*3)
+
+    # ==================== TF frame ====================
+    world_frame: odom                 # world frame(世界系, 固定锚点; 原版 map/world 语义)
+    body_frame: livox_frame          # 车体 frame(动, 对应原版 base_link)
+
+    # ==================== 时间戳域校准 ====================
+    # 部分驱动把"设备开机 uptime"当 header.stamp(如 mid360 开 PTP 但无 master), 与时钟域差一个常数,
+    # 导致 rviz 按当前时间查 TF 查不到。0 = 自动校准(首帧取"时钟-数据"差值, bag/真机通用); 非0 = 手动指定偏移秒。
+    time_offset: 0.0
+
+    # ==================== 预处理 (原版 preprocess 段) ====================
+    preprocess:
+      point_filter_num: 1            # 跳点: 每 N 个留 1 个
+      blind: 0.1                     # 盲区半径(m)
+      max_range: 150.0               # 点云有效距离(m): 超过丢弃
+
+    # ==================== 里程计 ====================
+    odometry:
+      # ---- 外参与同步 (原版 mapping/delay_time 段) ----
+      extrinsic_t: [ -0.011, -0.02329, 0.04412 ]  # 外参平移 T_IL: 雷达在 IMU 系下位置
+      extrinsic_r: [1.0, 0.0, 0.0,
+                    0.0, 1.0, 0.0,
+                    0.0, 0.0, 1.0]  # 外参旋转 R_IL
+      delay_time: 0.15               # 同步提前量(s)
+
+      # ---- CT-ICP 匹配 ----
+      surf_res: 0.2                  # 匹配前关键点体素降采样(m)
+      max_num_iteration: 10          # ICP 外部迭代次数
+      downsample_size: 0.05          # 消费线程入口粗降采样(m); 0=不降采样
+      ceres_max_num_iterations: 5    # 内层 LM 迭代上限(魔法数参数化)
+      ceres_num_threads: 3           # Ceres 线程数
+      ceres_huber_scale: 0.5         # Huber 核宽度
+      max_dist_to_plane_icp: 0.3     # 点到面硬门槛(m): 外点剔除
+      weight_alpha: 0.9              # 残差权重 α(平面性占比)
+      weight_neighborhood: 0.1       # 残差权重 1-α(邻域距离占比)
+      power_planarity: 2.0           # 平面性指数 a2D^power
+      sampling_rate: 1.0             # 关键点降采样格大小系数
+      max_num_residuals: 2000        # 最大残差数
+      init_num_frames: 20            # 初始化帧数(前 N 帧邻域加宽)
+
+      # ---- 体素地图 (LRU + 距离兜底) ----
+      size_voxel_map: 0.2            # 地图体素边长(m)
+      min_distance_points: 0.05      # 插入去重距离(m)
+      max_num_points_in_voxel: 20    # 每体素最多点数
+      capacity: 1000000              # LRU 容量(体素数)
+      max_distance: 500.0            # 距离裁剪半径(m)
+
+      # ---- 邻域搜索 ----
+      voxel_neighborhood: 1          # 邻域体素范围(1=3x3x3)
+      max_number_neighbors: 20       # 最多邻居数
+      threshold_voxel_occupancy: 1   # 体素占用阈值
+      min_number_neighbors: 20       # 有效邻域最少点数
+      num_closest_neighbors: 1       # 最近邻点数(构造残差用)
+
+      # ---- 一致性正则 (CT 固定开启) ----
+      beta_location_consistency: 1.0    # begin 位置与上帧 end 一致
+      beta_orientation_consistency: 1.0 # begin 姿态与上帧 end 一致
+      beta_small_velocity: 0.0          # 帧内位移小(默认关)
+
+      # ---- 收敛判定 ----
+      thres_translation_norm: 0.01   # 平移收敛阈值(m)
+      thres_orientation_norm: 0.1    # 旋转收敛阈值(deg)
+
+    # ==================== ESKF (滤波 + IMU 初始化 + 饱和检测) ====================
+    eskf:
+      # ---- ESKF 噪声 (原版 lidarodom.cpp 默认值) ----
+      laser_point_cov: 0.001         # 激光点测量噪声(残差信息矩阵)
+      odom_trans_noise: 0.01         # ObserveSE3 平移噪声
+      odom_ang_noise: 0.01           # ObserveSE3 旋转噪声
+      imu_dt: 0.01                   # IMU 测量间隔(s); 注: livox IMU 实际 200Hz(0.005s), 但 dt 上限判定用 5*imu_dt=0.05s, 该值仅作鲁棒判定阈值, 非采样周期
+      gyro_var: 0.00001              # 陀螺测量标准差 (1e-5)
+      acce_var: 0.01                 # 加计测量标准差 (1e-2)
+      bias_gyro_var: 0.000001        # 陀螺零偏游走 (1e-6)
+      bias_acce_var: 0.0001          # 加计零偏游走 (1e-4)
+
+      # ---- IMU 初始化 ----
+      init_mode: static              # static / dynamic
+      gravity_norm: 9.7880              # 重力大小(兼作 IMU 加速度 g→m/s² 换算)
+      init_time_seconds: 1.0         # static 静止收集时间
+      dynamic_min_imu_count: 200     # dynamic: 攒够 IMU 数
+      max_static_gyro_var: 0.5       # 静止判定陀螺阈值
+      max_static_acce_var: 0.6       # 静止判定加计阈值
+
+      # ---- IMU 饱和检测 (阈值判定方案) ----
+      check_satu: true               # 是否开启饱和检测(默认开)
+      satu_gyro: 35.0                # 陀螺饱和阈值(rad/s ≈ 2005°/s, 按 IMU 量程配)
+      satu_acc: 29.4                 # 加计饱和阈值(m/s² = 3g×9.81, 按 IMU 量程配)
+      satu_hold: true                # 饱和时用上次有效值按轴外推
+      satu_margin: 0.99              # 饱和判定余量(×阈值, 防浮点误触发)
+      satu_freeze_bias: true         # 饱和帧跳过 IMU 初始化器(防零偏污染)
+
+    # ==================== 地图保存 (增量分片 + 退出融合) ====================
+    save_map:
+      enabled: true                 # flag: 是否保存 pcd 文件
+      save_interval_frames: 100      # 每 N 帧保存一个分片 pcd(增量新点, 按时间戳命名)
+      voxel_filter_size: 0.05         # 退出时融合全部分片后的体素滤波尺寸(m)
+      save_dir: /tmp/ct_lio_map      # 输出目录(分片 + 融合结果; Ctrl+C 退出时融合并清理分片)

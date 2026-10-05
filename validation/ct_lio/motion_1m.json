@@ -1,0 +1,61 @@
+{
+  "commanded_speed_m_s": 0.045,
+  "target_distance_m": 1.0,
+  "motion_duration_s": 22.92415323900002,
+  "stop_reason": "wheel_distance_reached",
+  "wheel_initial_xyz_m": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "wheel_final_xyz_m": [
+    0.6530581461707682,
+    0.7622915974702444,
+    0.0
+  ],
+  "wheel_displacement_m": 1.003779568358381,
+  "wheel_max_displacement_m": 1.0041995838278979,
+  "ct_initial_xyz_m": [
+    -0.0003189121779690458,
+    0.0010284545735775288,
+    -0.0010872416461030158
+  ],
+  "ct_final_xyz_m": [
+    0.9460575820870053,
+    -0.022758815467673638,
+    0.011993265272540486
+  ],
+  "ct_delta_xyz_m": [
+    0.9463764942649744,
+    -0.023787270041251165,
+    0.013080506918643502
+  ],
+  "ct_displacement_m": 0.9467657591899525,
+  "ct_initial_xyzw": [
+    -0.009850894113451462,
+    -0.0056425778602315815,
+    0.00035552980334037446,
+    0.999935495318981
+  ],
+  "ct_final_xyzw": [
+    -0.009907395978618836,
+    -0.005778381541172421,
+    -0.02826269218947661,
+    0.9995347287822922
+  ],
+  "invalid_ct_odom_count": 0,
+  "counts": {
+    "wheel": 1209,
+    "ct": 212,
+    "lidar": 223,
+    "status": 49
+  },
+  "final_base_state": {
+    "vehicle_state": 0,
+    "control_mode": 1,
+    "motion_mode": 0,
+    "error_code": 0
+  },
+  "front_clearance_m": null,
+  "zero_command_sent": true
+}

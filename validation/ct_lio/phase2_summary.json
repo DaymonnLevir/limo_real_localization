@@ -1,0 +1,56 @@
+{
+  "phase": 2,
+  "date_local": "2026-10-05",
+  "robot_motion_trials": 1,
+  "sensor": {
+    "lidar_topic": "/livox/lidar",
+    "lidar_type": "sensor_msgs/msg/PointCloud2",
+    "lidar_rate_hz_preflight": 10.191430531561018,
+    "lidar_rate_hz_after_motion_raw_probe": 9.495349549372069,
+    "imu_topic": "/livox/imu",
+    "imu_rate_hz_preflight": 200.6584500041275,
+    "imu_rate_hz_after_motion_raw_probe": 200.1953339272355,
+    "point_timestamp_field": "timestamp FLOAT64 absolute nanoseconds",
+    "message_timestamp_regressions": 0,
+    "adjacent_point_order_inversions_per_frame_approx": "130-140, typically about 0.25 ms"
+  },
+  "stationary": {
+    "duration_s": 90.01640412199998,
+    "final_displacement_m": 0.0018032603441466967,
+    "maximum_displacement_m": 0.005777736433226915,
+    "nonfinite_messages": 0,
+    "timestamp_regressions_between_messages": 0,
+    "ct_lio_crashes_or_resets": 0
+  },
+  "single_forward_motion": {
+    "commanded_speed_m_s": 0.045,
+    "duration_s": 22.92415323900002,
+    "wheel_reference_displacement_m": 1.003779568358381,
+    "ct_lio_displacement_at_command_cut_m": 0.9467657591899525,
+    "ct_lio_displacement_after_settling_m": 1.058298005072656,
+    "settled_ct_lio_minus_wheel_m": 0.05451843671427503,
+    "settled_ct_lio_delta_xyz_m": [1.0578342150848328, -0.025466983363781837, 0.018244826526122686],
+    "settled_orientation_change_deg": 3.6500685011268863,
+    "post_stop_15s_displacement_m": 0.0028168703891017356,
+    "stop_reason": "wheel_distance_reached",
+    "base_linear_and_angular_speed_after_stop_m_s_rad_s": [0.0, 0.0],
+    "nonzero_command_publishers_after_stop": 0,
+    "base_container_stopped": true,
+    "ct_lio_container_stopped": true,
+    "ct_lio_crashes_or_resets": 0
+  },
+  "rviz": {
+    "opened": true,
+    "global_status": "Ok",
+    "map_coherent": true,
+    "path_continuous": true,
+    "tf": "ct_lio_odom -> livox_frame",
+    "warnings": "Stereo is NOT SUPPORTED; no material rendering warnings"
+  },
+  "limitations": [
+    "Wheel odometry is an operational stopping reference, not external ground truth.",
+    "PointCloud2 point array is not strictly ordered by per-point time.",
+    "The full Python observer undercounted message rates under load; use rates_raw.py results.",
+    "CT-LIO pose changed by about 0.11 m from command cut to settled estimate."
+  ]
+}

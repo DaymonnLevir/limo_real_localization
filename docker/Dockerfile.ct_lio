@@ -1,0 +1,17 @@
+ARG BASE_IMAGE=limo-real-fast-livo2:stage2
+FROM ${BASE_IMAGE}
+SHELL ["/bin/bash", "-c"]
+COPY ros2_ws/src/ct_lio /workspace/ros2_ws/src/ct_lio
+RUN source /workspace/ros2_ws/install/setup.bash && \
+    cd /workspace/ros2_ws && \
+    MAKEFLAGS=-j1 CMAKE_BUILD_PARALLEL_LEVEL=1 colcon build \
+      --executor sequential --parallel-workers 1 \
+      --packages-select ct_lio_ros2 \
+      --cmake-args -DCMAKE_BUILD_TYPE=Release && \
+    source install/setup.bash && \
+    ./build/ct_lio_ros2/ct_lio_timestamp_smoke
+LABEL ct_lio.upstream="https://github.com/inkccc/ct_lio_ros2" \
+      ct_lio.branch="main" \
+      ct_lio.commit="bdc683e9fe74de8fc7501086f7ae105d96bc5db1"
+WORKDIR /workspace/ros2_ws
+CMD ["bash"]

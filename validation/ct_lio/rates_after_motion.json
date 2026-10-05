@@ -1,0 +1,26 @@
+{
+  "/livox/lidar": {
+    "count": 95,
+    "hz": 9.495349549372069
+  },
+  "/livox/imu": {
+    "count": 2003,
+    "hz": 200.1953339272355
+  },
+  "/ct_lio/odom": {
+    "count": 91,
+    "hz": 9.070754348441806
+  },
+  "/ct_lio/odometry_path": {
+    "count": 88,
+    "hz": 8.769057765397244
+  },
+  "/ct_lio/map_incremental": {
+    "count": 88,
+    "hz": 8.7690400889894
+  },
+  "/tf": {
+    "count": 91,
+    "hz": 9.07123948892157
+  }
+}

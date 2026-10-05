@@ -1,0 +1,19 @@
+{
+  "phase": 1,
+  "physical_validation_performed": false,
+  "robot_motion_performed": false,
+  "upstream": "https://github.com/inkccc/ct_lio_ros2",
+  "branch": "main",
+  "commit": "bdc683e9fe74de8fc7501086f7ae105d96bc5db1",
+  "image": "limo-real-ct-lio:humble",
+  "image_id": "sha256:cf3cb9915093054dbb3162e7c7b13fb1aa13c59ae0d5b31d3956426805cc212b",
+  "build": "passed on Jetson ARM64, ROS2 Humble",
+  "timestamp_smoke": "passed: Livox XYZRTL 26-byte PointCloud2, 100 ms span, rejects missing timestamp",
+  "installed_executable": "ct_lio_ros2/ct_lio_node",
+  "launch": "ct_lio_ros2/limo_mid360.launch.py",
+  "parameters": "loaded in software-only smoke",
+  "subscriber_lidar": "/livox/lidar sensor_msgs/msg/PointCloud2 RELIABLE",
+  "subscriber_imu": "/livox/imu sensor_msgs/msg/Imu RELIABLE",
+  "missing_shared_libraries": 0,
+  "active_sensor_publishers_during_smoke": 0
+}

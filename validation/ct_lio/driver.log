@@ -1,0 +1,20 @@
+[INFO] [1791212009.620971863] [livox_driver_node]: Livox Ros Driver2 Version: 1.2.6
+[INFO] [1791212009.621415906] [livox_driver_node]: Data Source is raw lidar.
+[INFO] [1791212009.621452226] [livox_driver_node]: Config file : /workspace/ros2_ws/install/livox_ros_driver2/share/livox_ros_driver2/config/MID360_config.json
+LdsLidar *GetInstance
+config lidar type: 8
+successfully parse base config, counts: 1
+[INFO] [1791212009.627468658] [livox_driver_node]: Init lds lidar success!
+GetFreeIndex key:livox_lidar_3003230400.
+Init queue, real query size:16.
+Lidar[0] storage queue size: 10
+set pcl data type, handle: 3003230400, data type: 1
+set scan pattern, handle: 3003230400, scan pattern: 0
+begin to change work mode to 'Normal', handle: 3003230400
+successfully set data type, handle: 3003230400, set_bit: 2
+successfully set pattern mode, handle: 3003230400, set_bit: 0
+successfully set lidar attitude, ip: 192.168.1.179
+successfully change work mode, handle: 3003230400
+successfully enable Livox Lidar imu, ip: 192.168.1.179
+[INFO] [1791212012.628020862] [livox_driver_node]: livox/imu publish use imu format
+[INFO] [1791212012.630224490] [livox_driver_node]: livox/lidar publish use PointCloud2 format

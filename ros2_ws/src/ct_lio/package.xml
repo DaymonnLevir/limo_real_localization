@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ct_lio_ros2</name>
+  <version>0.0.0</version>
+  <description>CT-LIO ROS2: Continuous-Time LiDAR-Inertial Odometry (CT-ICP + ESKF, hash voxel map)</description>
+  <maintainer email="inkccc@foxmail.com">ink</maintainer>
+  <!-- 核心算法逐行对齐自 ct-lio (GPL-2.0), 见 README 末尾 license 备注 -->
+  <license>GPL-2.0-only</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>pcl_conversions</depend>
+  <depend>eigen3_cmake_module</depend>
+
+  <!-- 系统级数值依赖 (rosdep 可复现构建) -->
+  <build_depend>libceres-dev</build_depend>
+  <build_depend>libpcl-dev</build_depend>
+  <build_depend>libeigen3-dev</build_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
