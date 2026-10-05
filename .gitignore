@@ -51,3 +51,9 @@ __pycache__/
 # FAST-LIVO2 Stage 2 camera calibration raw data
 calibration/camera/dabai_dc1_raw/
 calibration/camera/dabai_dc1_calibrationdata.tar.gz
+
+# Point-LIO generated artifacts (compact validation JSON is tracked).
+ros2_ws/src/point_lio/Log/
+ros2_ws/src/point_lio/PCD/
+validation/point_lio/raw/
+*.pcd

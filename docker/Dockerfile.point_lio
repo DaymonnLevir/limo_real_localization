@@ -1,0 +1,16 @@
+# Extend the validated ARM64 Humble stack without replacing its image.
+ARG BASE_IMAGE=limo-real-fast-livo2:stage2
+FROM ${BASE_IMAGE}
+SHELL ["/bin/bash", "-c"]
+COPY ros2_ws/src/point_lio /workspace/ros2_ws/src/point_lio
+RUN source /workspace/ros2_ws/install/setup.bash && \
+    cd /workspace/ros2_ws && \
+    MAKEFLAGS=-j1 CMAKE_BUILD_PARALLEL_LEVEL=1 colcon build \
+      --executor sequential --packages-select point_lio \
+      --cmake-args -DCMAKE_BUILD_TYPE=Release && \
+    mkdir -p src/point_lio/Log src/point_lio/PCD
+LABEL point_lio.upstream="https://github.com/LihanChen2004/Point-LIO" \
+      point_lio.branch="grid_map_ros2" \
+      point_lio.commit="155f46da0b1eb3fc7c7facf43b00cb124631c807"
+WORKDIR /workspace/ros2_ws
+CMD ["bash"]
