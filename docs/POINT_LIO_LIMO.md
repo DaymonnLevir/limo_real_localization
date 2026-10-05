@@ -131,6 +131,61 @@ independente envia zero quando a autorização temporária de comando expira
 Esses scripts são instrumentos deste teste supervisionado, não navegação
 autônoma nem um sistema certificado de prevenção de colisões.
 
-## Resultados desta execução
+## Resultados desta execução (05/10/2026, após reboot)
 
-Pendente de concluir compilação e ensaios físicos.
+- Commit da branch já existente: `f051f32306bbe2e802eb26afcd5367b01db137e9`.
+  Sem recompilação nesta retomada. Imagem ARM64 válida:
+  `limo-real-point-lio:humble`, ID
+  `sha256:534396c26c32c27dd986fa3a9488277f046ca34ff60f9004880a8bff44353acb`.
+  `ros2 pkg executables point_lio` encontrou `pointlio_mapping`; launch e
+  configuração instalados; `ldd` sem bibliotecas ausentes.
+- Após reboot, `eth0` começou `NO-CARRIER`. Com o sensor energizado, o link
+  retornou em `192.168.1.5/24`; foi adicionado *temporariamente*
+  `192.168.1.50/24` e ping de `192.168.1.179` respondeu. O IP secundário
+  desaparece no próximo reboot. O driver único iniciou com `xfer_format=1`.
+- Janela parada: `validation/point_lio/stationary.json`, **90,03 s**. LiDAR
+  **9,997 Hz**, aproximadamente **20.064 pontos por quadro** e intervalo de
+  tempo por ponto de ~0 a 99,9 ms. Odometria e nuvem **10,007 Hz**;
+  trajetória **9,997 Hz**. IMU: aceleração média **0,9968 g** (desvio
+  0,0033 g), giro médio **0,0052 rad/s**. O medidor Python completo contou
+  145,5 Hz de IMU, pois a inspeção de nuvens e trajetórias ocupou seu laço.
+  A medição independente com `ros2 topic hz` confirmou **200,02 Hz**.
+  Deslocamento estimado final **6,1 mm**; desvio máximo **20,3 mm**. Sem
+  NaN/Inf, regressão de timestamps ou crash.
+- Pulso de movimento: base em modo normal/serial, erro zero, comando reto
+  limitado a **0,02 m/s** por até 2 s. A guarda encaminhou movimento por
+  **1,784 s**; roda observada em **0,017–0,018 m/s**, seguida de zero.
+  Janela de 35,09 s em `validation/point_lio/motion.json`: Point-LIO avançou
+  **+30,2 mm no eixo X** entre primeira e última amostra; máximo afastamento
+  da primeira pose **47,0 mm**. Escala e direção coerentes com um avanço
+  físico de poucos centímetros. Sem NaN/Inf, regressão de timestamps, crash
+  ou explosão de trajetória. Não houve medição externa de distância.
+  Os `6,5 Hz` observados pelo medidor completo durante esse ensaio refletiram
+  sobrecarga do próprio processo Python junto ao RViz e à guarda. Com o
+  contador bruto e leve, ainda com RViz/base/guarda ativos, obtivemos:
+  LiDAR **9,9998 Hz**, IMU **200,0226 Hz**, odometria/nuvem/path
+  **10,256 Hz** (`validation/point_lio/rates_after_motion.json`).
+- RViz via X11 e renderização por software abriu em OpenGL 4.5, status
+  global **OK**. As nuvens registradas exibiram paredes e objetos estáveis
+  antes e depois do avanço; Path e TF estavam ativos. Não foi usado PCD
+  persistente. O TF real é `camera_init -> aft_mapped`; a mensagem Odometry
+  indica child `body`. Uma janela posterior da guarda travou por um atraso
+  isolado de nuvem >0,35 s, enviando zero; ocorreu **após** o pulso e a base
+  já estava parada. Isso evidencia que a guarda é conservadora sob carga.
+- Base e guarda foram encerradas após o teste. O `limo_base` antigo imprime
+  `Aborted` ao receber SIGINT no encerramento, já sem movimento; não houve
+  crash do Point-LIO. O container principal de sensor, Point-LIO e RViz pode
+  permanecer ativo para inspeção e pode ser parado com
+  `docker stop -t 15 limo-point-lio`.
+
+Para repetir o teste com guarda e base remapeada, inicie o container, driver e
+Point-LIO como acima. Depois, em terminais distintos:
+
+```bash
+docker exec -it limo-point-lio bash -lc 'source /workspace/ros2_ws/install/setup.bash; ros2 run limo_base limo_base --ros-args -p port_name:=ttyTHS0 -p pub_odom_tf:=false -r /cmd_vel:=/point_lio_test/cmd_vel -r /odom:=/point_lio_test/wheel_odom -r /limo_status:=/point_lio_test/status -r /imu:=/point_lio_test/base_imu'
+docker exec -it limo-point-lio bash -lc 'source /workspace/ros2_ws/install/setup.bash; python3 /validation/motion_guard.py'
+docker exec -it limo-point-lio bash -lc 'source /workspace/ros2_ws/install/setup.bash; python3 /validation/motion_pulse.py'
+```
+
+Só inicie o pulso depois de observar `ready: true` na guarda e uma área livre
+à frente. O container monta `validation/point_lio` em `/validation`.
