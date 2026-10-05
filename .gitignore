@@ -51,3 +51,15 @@ __pycache__/
 # FAST-LIVO2 Stage 2 camera calibration raw data
 calibration/camera/dabai_dc1_raw/
 calibration/camera/dabai_dc1_calibrationdata.tar.gz
+
+# Stage 3: isolated ROS1 calibration build and physical acquisition
+calibration/fast_calib/**/build/
+calibration/fast_calib/**/devel/
+calibration/fast_calib/**/log/
+calibration/fast_calib/**/logs/
+calibration/fast_calib/datasets/*
+!calibration/fast_calib/datasets/.gitkeep
+calibration/fast_calib/results/*
+!calibration/fast_calib/results/.gitkeep
+calibration/fast_calib/**/*.bag.active
+calibration/fast_calib/**/*.pcd

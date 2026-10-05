@@ -1,0 +1,18 @@
+# Intrínsecos da imagem RAW 640x480; não usar imagem retificada.
+fx: 494.55179
+fy: 493.91134
+cx: 314.61947
+cy: 221.95045
+k1: 0.095855
+k2: -0.122538
+p1: 0.003246
+p2: 0.002270
+# FAST-Calib fixa k3=0.
+marker_size: 0.20
+delta_width_qr_center: 0.55
+delta_height_qr_center: 0.35
+delta_width_circles: 0.50
+delta_height_circles: 0.40
+circle_radius: 0.12
+min_detected_markers: 3
+lidar_topic: /livox/lidar
